@@ -1,0 +1,28 @@
+---
+
+- hosts: all
+  remote_user: vagrant
+  sudo: yes
+
+  tasks:
+    #- name: kill sshd process for Docker
+      #action: shell ps aux | grep 'sshd:' | awk '{print $2}' | sudo xargs kill
+
+    - name: update apt
+      action: command /usr/bin/apt-get update
+
+    - name: add nginx ppa
+      action: apt_repository repo=ppa:nginx/stable state=present
+
+    - name: install nginx package
+      action: apt pkg=nginx state=installed
+
+    - name: remove default nginx site
+      action: file path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: write nginx.conf
+      action: template src=templates/nginx.conf dest=/etc/nginx/nginx.conf
+
+    #- name: install SSL certificates
+      #action: ???
+      #notify: restart-nginx
